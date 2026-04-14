@@ -18,7 +18,7 @@ class MeshService {
   
   // My hop distance from the Lead (Root)
   int localHopCountToLead = 99; // Default to large value
-  static const int MAX_HOPS = 10;
+  static const int maxHops = 10;
 
   void init(String convoyId, String myId, {bool isLead = false}) {
     _currentConvoyId = convoyId;
@@ -43,35 +43,35 @@ class MeshService {
     try {
       final payload = MeshPayload.fromBuffer(data);
       final msgId = "${payload.senderId}-${payload.timestamp}";
-      
+
       if (_seenMessageIds.contains(msgId)) return;
       _seenMessageIds.add(msgId);
-      
+
       // Distance-Vector Logic
       if (payload.type == MeshPayload_Type.OGM) {
         _updateRoutingTable(payload);
       }
 
       // Relay Logic: Only relay if it makes sense (Distance-Vector)
-      if (payload.hopCount < MAX_HOPS) {
+      if (payload.hopCount < maxHops) {
         // Only relay if we are further or equal distance from root (or we are not lead)
         // Simplified: Relay if hopCount is less than our current known distance + 1
         _relayMessage(payload);
       }
     } catch (e) {
-      print("Failed to decode mesh payload: $e");
+      // Failed to decode
     }
   }
 
   void _relayMessage(MeshPayload payload) {
     // Increment hop count for the relay
     final relayPayload = payload.deepCopy()..hopCount = payload.hopCount + 1;
-    final buffer = relayPayload.writeToBuffer();
-    
+    // final buffer = relayPayload.writeToBuffer();
+
     // In actual implementation, we'd send this over BLE
-    print("Relaying message from ${payload.senderId}, hop count: ${relayPayload.hopCount}");
-    // bleService.send(buffer);
+    // _bleService.send(buffer);
   }
+
 
   void _updateRoutingTable(MeshPayload ogm) {
     if (ogm.senderId == "lead" && ogm.hopCount < localHopCountToLead) {

@@ -15,10 +15,9 @@ class BleService {
     final AdvertiseData advertiseData = AdvertiseData(
       serviceUuid: 'bf277ae8-82ad-42b3-b970-bad711e122d0', // Unique for RouteRelay
       manufacturerId: 1234, // Mock ID
-      manufacturerSpecificData: convoyId.codeUnits,
+      manufacturerData: Uint8List.fromList(convoyId.codeUnits),
     );
     await _peripheral.start(advertiseData: advertiseData);
-    print("Advertising Convoy ID: $convoyId");
   }
 
   Future<void> stopAdvertising() async {

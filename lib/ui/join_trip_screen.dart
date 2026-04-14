@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import '../services/crypto_service.dart';
 
 class JoinTripScreen extends StatefulWidget {
   final String? convoyId;
   final String? base64TripKey;
 
-  const JoinTripScreen({Key? key, this.convoyId, this.base64TripKey}) : super(key: key);
+  const JoinTripScreen({super.key, this.convoyId, this.base64TripKey});
 
   @override
   _JoinTripScreenState createState() => _JoinTripScreenState();
