@@ -12,6 +12,7 @@ class MeshService {
   final BleService _bleService = BleService();
   String? _currentConvoyId;
   String? _myId;
+  Timer? _telemetryTimer;
   
   // Cache for deduplication: [sender_id + timestamp] -> boolean
   final Set<String> _seenMessageIds = {};
@@ -24,6 +25,34 @@ class MeshService {
     _currentConvoyId = convoyId;
     _myId = myId;
     if (isLead) localHopCountToLead = 0;
+    _startTelemetryTimer();
+  }
+
+  void _startTelemetryTimer() {
+    _telemetryTimer?.cancel();
+    _telemetryTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      broadcastTelemetry(0.0, 0.0, 0.0, 0.0); // Mock coordinates
+    });
+  }
+
+  Future<void> broadcastTelemetry(double lat, double lng, double velocity, double heading) async {
+    if (_currentConvoyId == null || _myId == null) return;
+
+    final telemetry = Telemetry()
+      ..lat = lat
+      ..lng = lng
+      ..velocity = velocity
+      ..heading = heading;
+
+    final meshPayload = MeshPayload()
+      ..convoyId = _currentConvoyId!
+      ..senderId = _myId!
+      ..timestamp = Int64(DateTime.now().millisecondsSinceEpoch)
+      ..hopCount = localHopCountToLead
+      ..type = MeshPayload_Type.TELEMETRY
+      ..data = telemetry.writeToBuffer();
+
+    _relayMessage(meshPayload);
   }
 
   Future<void> broadcastOGM() async {
