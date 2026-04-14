@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_ble_peripheral/flutter_ble_peripheral.dart';
 
@@ -11,6 +12,19 @@ class BleService {
   final FlutterBlePeripheral _peripheral = FlutterBlePeripheral();
   final StreamController<ScanResult> _scanResultController = StreamController<ScanResult>.broadcast();
   Stream<ScanResult> get scanResults => _scanResultController.stream;
+
+  static const MethodChannel _l2capChannel = MethodChannel('io.routerelay/l2cap');
+
+  Future<void> openL2capChannel(String deviceId, int psm) async {
+    await _l2capChannel.invokeMethod('open', {
+      'deviceId': deviceId,
+      'psm': psm,
+    });
+  }
+
+  Future<void> sendAudioFrame(Uint8List data) async {
+    await _l2capChannel.invokeMethod('send', {'data': data});
+  }
 
   Future<void> startAdvertising(String convoyId) async {
     final AdvertiseData advertiseData = AdvertiseData(
