@@ -43,6 +43,8 @@ dependencies:
   mobile_scanner: ^7.2.0
   flutter_ble_peripheral: ^2.1.0
   fixnum: ^1.1.1
+  cryptography: ^2.9.0
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:
