@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import '../models/telemetry_state.dart';
+import '../services/audio_service.dart';
 import 'widgets/convoy_sidebar.dart';
+import 'widgets/ptt_button.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -12,8 +15,30 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   MapLibreMapController? _controller;
-  List<TelemetryState> _members = [];
-  double _leadVelocity = 0.0;
+  final List<TelemetryState> _members = [];
+  final double _leadVelocity = 0.0;
+  final AudioService _audioService = AudioService();
+  static const _hardwareKeys = MethodChannel('io.routerelay/hardware_keys');
+
+  @override
+  void initState() {
+    super.initState();
+    _hardwareKeys.setMethodCallHandler((call) async {
+      if (call.method == 'volumeUpPressed') {
+        _audioService.startRecording((data) {
+          // TODO: Send to mesh
+        });
+      } else if (call.method == 'volumeUpReleased') {
+        _audioService.stopRecording();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _audioService.dispose();
+    super.dispose();
+  }
 
   void _onMapCreated(MapLibreMapController controller) {
     _controller = controller;
@@ -54,6 +79,19 @@ class _MapScreenState extends State<MapScreen> {
             child: ConvoySidebar(
               members: _members,
               leadVelocity: _leadVelocity,
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 40,
+            child: Center(
+              child: PTTButton(
+                audioService: _audioService,
+                onAudioData: (data) {
+                  // TODO: Task 4 - Integrate with MeshService
+                },
+              ),
             ),
           ),
         ],

@@ -12,7 +12,7 @@ void main() {
   setUpAll(() {
     // For VM tests on Linux, load the system library
     if (Platform.isLinux) {
-      initOpus(DynamicLibrary.open('/usr/lib/x86_64-linux-gnu/libopus.so.0'));
+      initOpus(DynamicLibrary.open('/usr/lib/x86_64-linux-gnu/libopus.so.0') as dynamic);
     }
   });
 
