@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+message MeshPayload {
+  enum Type {
+    SOS = 0;
+    TELEMETRY = 1;
+    TEXT = 2;
+    OGM = 3;
+  }
+  string convoy_id = 1;
+  string sender_id = 2;
+  uint64 timestamp = 3;
+  uint32 hop_count = 4;
+  Type type = 5;
+  bytes data = 6;
+  bytes signature = 7;
+}
+
+message Telemetry {
+  double lat = 1;
+  double lng = 2;
+  double velocity = 3;
+  double heading = 4;
+}
