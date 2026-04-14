@@ -239,6 +239,173 @@ class Telemetry extends $pb.GeneratedMessage {
   void clearHeading() => $_clearField(4);
 }
 
+class TileRequest extends $pb.GeneratedMessage {
+  factory TileRequest({
+    $core.int? z,
+    $core.int? x,
+    $core.int? y,
+  }) {
+    final result = create();
+    if (z != null) result.z = z;
+    if (x != null) result.x = x;
+    if (y != null) result.y = y;
+    return result;
+  }
+
+  TileRequest._();
+
+  factory TileRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory TileRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'TileRequest',
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'z')
+    ..aI(2, _omitFieldNames ? '' : 'x')
+    ..aI(3, _omitFieldNames ? '' : 'y')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  TileRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  TileRequest copyWith(void Function(TileRequest) updates) =>
+      super.copyWith((message) => updates(message as TileRequest))
+          as TileRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static TileRequest create() => TileRequest._();
+  @$core.override
+  TileRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static TileRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<TileRequest>(create);
+  static TileRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get z => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set z($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasZ() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearZ() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get x => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set x($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasX() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearX() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get y => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set y($core.int value) => $_setSignedInt32(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasY() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearY() => $_clearField(3);
+}
+
+class TileResponse extends $pb.GeneratedMessage {
+  factory TileResponse({
+    $core.int? z,
+    $core.int? x,
+    $core.int? y,
+    $core.List<$core.int>? tileData,
+  }) {
+    final result = create();
+    if (z != null) result.z = z;
+    if (x != null) result.x = x;
+    if (y != null) result.y = y;
+    if (tileData != null) result.tileData = tileData;
+    return result;
+  }
+
+  TileResponse._();
+
+  factory TileResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory TileResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'TileResponse',
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'z')
+    ..aI(2, _omitFieldNames ? '' : 'x')
+    ..aI(3, _omitFieldNames ? '' : 'y')
+    ..a<$core.List<$core.int>>(
+        4, _omitFieldNames ? '' : 'tileData', $pb.PbFieldType.OY)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  TileResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  TileResponse copyWith(void Function(TileResponse) updates) =>
+      super.copyWith((message) => updates(message as TileResponse))
+          as TileResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static TileResponse create() => TileResponse._();
+  @$core.override
+  TileResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static TileResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<TileResponse>(create);
+  static TileResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get z => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set z($core.int value) => $_setSignedInt32(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasZ() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearZ() => $_clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get x => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set x($core.int value) => $_setSignedInt32(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasX() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearX() => $_clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get y => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set y($core.int value) => $_setSignedInt32(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasY() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearY() => $_clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.List<$core.int> get tileData => $_getN(3);
+  @$pb.TagNumber(4)
+  set tileData($core.List<$core.int> value) => $_setBytes(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasTileData() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearTileData() => $_clearField(4);
+}
+
 const $core.bool _omitFieldNames =
     $core.bool.fromEnvironment('protobuf.omit_field_names');
 const $core.bool _omitMessageNames =

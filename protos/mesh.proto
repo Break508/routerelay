@@ -6,6 +6,8 @@ message MeshPayload {
     TELEMETRY = 1;
     TEXT = 2;
     OGM = 3;
+    TILE_REQUEST = 4;
+    TILE_RESPONSE = 5;
   }
   string convoy_id = 1;
   string sender_id = 2;
@@ -21,4 +23,17 @@ message Telemetry {
   double lng = 2;
   double velocity = 3;
   double heading = 4;
+}
+
+message TileRequest {
+  int32 z = 1;
+  int32 x = 2;
+  int32 y = 3;
+}
+
+message TileResponse {
+  int32 z = 1;
+  int32 x = 2;
+  int32 y = 3;
+  bytes tile_data = 4;
 }

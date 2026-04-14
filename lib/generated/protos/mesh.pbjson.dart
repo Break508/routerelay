@@ -45,6 +45,8 @@ const MeshPayload_Type$json = {
     {'1': 'TELEMETRY', '2': 1},
     {'1': 'TEXT', '2': 2},
     {'1': 'OGM', '2': 3},
+    {'1': 'TILE_REQUEST', '2': 4},
+    {'1': 'TILE_RESPONSE', '2': 5},
   ],
 };
 
@@ -53,8 +55,9 @@ final $typed_data.Uint8List meshPayloadDescriptor = $convert.base64Decode(
     'CgtNZXNoUGF5bG9hZBIbCgljb252b3lfaWQYASABKAlSCGNvbnZveUlkEhsKCXNlbmRlcl9pZB'
     'gCIAEoCVIIc2VuZGVySWQSHAoJdGltZXN0YW1wGAMgASgEUgl0aW1lc3RhbXASGwoJaG9wX2Nv'
     'dW50GAQgASgNUghob3BDb3VudBIlCgR0eXBlGAUgASgOMhEuTWVzaFBheWxvYWQuVHlwZVIEdH'
-    'lwZRISCgRkYXRhGAYgASgMUgRkYXRhEhwKCXNpZ25hdHVyZRgHIAEoDFIJc2lnbmF0dXJlIjEK'
-    'BFR5cGUSBwoDU09TEAASDQoJVEVMRU1FVFJZEAESCAoEVEVYVBACEgcKA09HTRAD');
+    'lwZRISCgRkYXRhGAYgASgMUgRkYXRhEhwKCXNpZ25hdHVyZRgHIAEoDFIJc2lnbmF0dXJlIlYK'
+    'BFR5cGUSBwoDU09TEAASDQoJVEVMRU1FVFJZEAESCAoEVEVYVBACEgcKA09HTRADEhAKDFRJTE'
+    'VfUkVRVUVTVBAEEhEKDVRJTEVfUkVTUE9OU0UQBQ==');
 
 @$core.Deprecated('Use telemetryDescriptor instead')
 const Telemetry$json = {
@@ -71,3 +74,34 @@ const Telemetry$json = {
 final $typed_data.Uint8List telemetryDescriptor = $convert.base64Decode(
     'CglUZWxlbWV0cnkSEAoDbGF0GAEgASgBUgNsYXQSEAoDbG5nGAIgASgBUgNsbmcSGgoIdmVsb2'
     'NpdHkYAyABKAFSCHZlbG9jaXR5EhgKB2hlYWRpbmcYBCABKAFSB2hlYWRpbmc=');
+
+@$core.Deprecated('Use tileRequestDescriptor instead')
+const TileRequest$json = {
+  '1': 'TileRequest',
+  '2': [
+    {'1': 'z', '3': 1, '4': 1, '5': 5, '10': 'z'},
+    {'1': 'x', '3': 2, '4': 1, '5': 5, '10': 'x'},
+    {'1': 'y', '3': 3, '4': 1, '5': 5, '10': 'y'},
+  ],
+};
+
+/// Descriptor for `TileRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List tileRequestDescriptor = $convert.base64Decode(
+    'CgtUaWxlUmVxdWVzdBIMCgF6GAEgASgFUgF6EgwKAXgYAiABKAVSAXgSDAoBeRgDIAEoBVIBeQ'
+    '==');
+
+@$core.Deprecated('Use tileResponseDescriptor instead')
+const TileResponse$json = {
+  '1': 'TileResponse',
+  '2': [
+    {'1': 'z', '3': 1, '4': 1, '5': 5, '10': 'z'},
+    {'1': 'x', '3': 2, '4': 1, '5': 5, '10': 'x'},
+    {'1': 'y', '3': 3, '4': 1, '5': 5, '10': 'y'},
+    {'1': 'tile_data', '3': 4, '4': 1, '5': 12, '10': 'tileData'},
+  ],
+};
+
+/// Descriptor for `TileResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List tileResponseDescriptor = $convert.base64Decode(
+    'CgxUaWxlUmVzcG9uc2USDAoBehgBIAEoBVIBehIMCgF4GAIgASgFUgF4EgwKAXkYAyABKAVSAX'
+    'kSGwoJdGlsZV9kYXRhGAQgASgMUgh0aWxlRGF0YQ==');

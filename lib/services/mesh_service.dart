@@ -55,20 +55,26 @@ class MeshService {
     _relayMessage(meshPayload);
   }
 
-  Future<void> broadcastOGM() async {
+  Future<void> requestTile(int z, int x, int y) async {
     if (_currentConvoyId == null || _myId == null) return;
+
+    final request = TileRequest()
+      ..z = z
+      ..x = x
+      ..y = y;
 
     final meshPayload = MeshPayload()
       ..convoyId = _currentConvoyId!
       ..senderId = _myId!
       ..timestamp = Int64(DateTime.now().millisecondsSinceEpoch)
       ..hopCount = localHopCountToLead
-      ..type = MeshPayload_Type.OGM;
+      ..type = MeshPayload_Type.TILE_REQUEST
+      ..data = request.writeToBuffer();
 
     _relayMessage(meshPayload);
-  }
+    }
 
-  void handleIncomingMessage(Uint8List data) {
+    void handleIncomingMessage(Uint8List data) {
     try {
       final payload = MeshPayload.fromBuffer(data);
       final msgId = "${payload.senderId}-${payload.timestamp}";
@@ -76,22 +82,44 @@ class MeshService {
       if (_seenMessageIds.contains(msgId)) return;
       _seenMessageIds.add(msgId);
 
-      // Distance-Vector Logic
-      if (payload.type == MeshPayload_Type.OGM) {
-        _updateRoutingTable(payload);
+      // Dispatch based on type
+      switch (payload.type) {
+        case MeshPayload_Type.OGM:
+          _updateRoutingTable(payload);
+          break;
+        case MeshPayload_Type.TILE_REQUEST:
+          _handleTileRequest(payload);
+          break;
+        case MeshPayload_Type.TILE_RESPONSE:
+          _handleTileResponse(payload);
+          break;
+        case MeshPayload_Type.TELEMETRY:
+          _handleTelemetry(payload);
+          break;
+        default:
+          break;
       }
 
-      // Relay Logic: Only relay if it makes sense (Distance-Vector)
+      // Relay Logic
       if (payload.hopCount < maxHops) {
-        // Only relay if we are further or equal distance from root (or we are not lead)
-        // Simplified: Relay if hopCount is less than our current known distance + 1
         _relayMessage(payload);
       }
     } catch (e) {
       // Failed to decode
     }
-  }
+    }
 
+    void _handleTileRequest(MeshPayload payload) {
+    // In a real app, check local Isar cache for the tile
+    }
+
+    void _handleTileResponse(MeshPayload payload) {
+    // Store in local cache and notify MapService
+    }
+
+    void _handleTelemetry(MeshPayload payload) {
+    // Update local state of other cars
+    }
   void _relayMessage(MeshPayload payload) {
     // Increment hop count for the relay
     final relayPayload = payload.deepCopy()..hopCount = payload.hopCount + 1;
