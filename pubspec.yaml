@@ -46,6 +46,10 @@ dependencies:
   cryptography: ^2.9.0
   qr_flutter: ^4.1.0
   maplibre_gl: ^0.25.0
+  record: ^6.1.1
+  audioplayers: ^6.1.0
+  opus_dart: ^3.0.1
+  opus_flutter: ^3.0.1
 
 dev_dependencies:
   flutter_test:
