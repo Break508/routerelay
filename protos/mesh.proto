@@ -8,6 +8,7 @@ message MeshPayload {
     OGM = 3;
     TILE_REQUEST = 4;
     TILE_RESPONSE = 5;
+    VOICE = 6;
   }
   string convoy_id = 1;
   string sender_id = 2;

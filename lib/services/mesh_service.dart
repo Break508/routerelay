@@ -13,6 +13,9 @@ class MeshService {
   String? _currentConvoyId;
   String? _myId;
   Timer? _telemetryTimer;
+
+  final _voiceController = StreamController<Uint8List>.broadcast();
+  Stream<Uint8List> get voiceStream => _voiceController.stream;
   
   // Cache for deduplication: [sender_id + timestamp] -> boolean
   final Set<String> _seenMessageIds = {};
@@ -51,6 +54,20 @@ class MeshService {
       ..hopCount = localHopCountToLead
       ..type = MeshPayload_Type.TELEMETRY
       ..data = telemetry.writeToBuffer();
+
+    _relayMessage(meshPayload);
+  }
+
+  Future<void> broadcastVoice(Uint8List opusData) async {
+    if (_currentConvoyId == null || _myId == null) return;
+
+    final meshPayload = MeshPayload()
+      ..convoyId = _currentConvoyId!
+      ..senderId = _myId!
+      ..timestamp = Int64(DateTime.now().millisecondsSinceEpoch)
+      ..hopCount = localHopCountToLead
+      ..type = MeshPayload_Type.VOICE
+      ..data = opusData;
 
     _relayMessage(meshPayload);
   }
@@ -96,6 +113,9 @@ class MeshService {
         case MeshPayload_Type.TELEMETRY:
           _handleTelemetry(payload);
           break;
+        case MeshPayload_Type.VOICE:
+          _handleVoice(payload);
+          break;
         default:
           break;
       }
@@ -119,6 +139,12 @@ class MeshService {
 
     void _handleTelemetry(MeshPayload payload) {
     // Update local state of other cars
+    }
+
+    void _handleVoice(MeshPayload payload) {
+      if (payload.senderId != _myId) {
+        _voiceController.add(Uint8List.fromList(payload.data));
+      }
     }
   void _relayMessage(MeshPayload payload) {
     // Increment hop count for the relay

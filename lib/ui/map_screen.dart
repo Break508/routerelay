@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import '../models/telemetry_state.dart';
 import '../services/audio_service.dart';
+import '../services/mesh_service.dart';
 import 'widgets/convoy_sidebar.dart';
 import 'widgets/ptt_button.dart';
 
@@ -18,6 +19,7 @@ class _MapScreenState extends State<MapScreen> {
   final List<TelemetryState> _members = [];
   final double _leadVelocity = 0.0;
   final AudioService _audioService = AudioService();
+  final MeshService _meshService = MeshService();
   static const _hardwareKeys = MethodChannel('io.routerelay/hardware_keys');
 
   @override
@@ -26,11 +28,15 @@ class _MapScreenState extends State<MapScreen> {
     _hardwareKeys.setMethodCallHandler((call) async {
       if (call.method == 'volumeUpPressed') {
         _audioService.startRecording((data) {
-          // TODO: Send to mesh
+          _meshService.broadcastVoice(data);
         });
       } else if (call.method == 'volumeUpReleased') {
         _audioService.stopRecording();
       }
+    });
+
+    _meshService.voiceStream.listen((data) {
+      _audioService.play(data);
     });
   }
 
@@ -89,7 +95,7 @@ class _MapScreenState extends State<MapScreen> {
               child: PTTButton(
                 audioService: _audioService,
                 onAudioData: (data) {
-                  // TODO: Task 4 - Integrate with MeshService
+                  _meshService.broadcastVoice(data);
                 },
               ),
             ),

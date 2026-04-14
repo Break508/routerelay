@@ -27,6 +27,8 @@ class MeshPayload_Type extends $pb.ProtobufEnum {
       MeshPayload_Type._(4, _omitEnumNames ? '' : 'TILE_REQUEST');
   static const MeshPayload_Type TILE_RESPONSE =
       MeshPayload_Type._(5, _omitEnumNames ? '' : 'TILE_RESPONSE');
+  static const MeshPayload_Type VOICE =
+      MeshPayload_Type._(6, _omitEnumNames ? '' : 'VOICE');
 
   static const $core.List<MeshPayload_Type> values = <MeshPayload_Type>[
     SOS,
@@ -35,10 +37,11 @@ class MeshPayload_Type extends $pb.ProtobufEnum {
     OGM,
     TILE_REQUEST,
     TILE_RESPONSE,
+    VOICE,
   ];
 
   static final $core.List<MeshPayload_Type?> _byValue =
-      $pb.ProtobufEnum.$_initByValueList(values, 5);
+      $pb.ProtobufEnum.$_initByValueList(values, 6);
   static MeshPayload_Type? valueOf($core.int value) =>
       value < 0 || value >= _byValue.length ? null : _byValue[value];
 

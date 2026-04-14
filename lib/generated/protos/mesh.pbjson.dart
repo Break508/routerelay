@@ -47,6 +47,7 @@ const MeshPayload_Type$json = {
     {'1': 'OGM', '2': 3},
     {'1': 'TILE_REQUEST', '2': 4},
     {'1': 'TILE_RESPONSE', '2': 5},
+    {'1': 'VOICE', '2': 6},
   ],
 };
 
@@ -55,9 +56,9 @@ final $typed_data.Uint8List meshPayloadDescriptor = $convert.base64Decode(
     'CgtNZXNoUGF5bG9hZBIbCgljb252b3lfaWQYASABKAlSCGNvbnZveUlkEhsKCXNlbmRlcl9pZB'
     'gCIAEoCVIIc2VuZGVySWQSHAoJdGltZXN0YW1wGAMgASgEUgl0aW1lc3RhbXASGwoJaG9wX2Nv'
     'dW50GAQgASgNUghob3BDb3VudBIlCgR0eXBlGAUgASgOMhEuTWVzaFBheWxvYWQuVHlwZVIEdH'
-    'lwZRISCgRkYXRhGAYgASgMUgRkYXRhEhwKCXNpZ25hdHVyZRgHIAEoDFIJc2lnbmF0dXJlIlYK'
+    'lwZRISCgRkYXRhGAYgASgMUgRkYXRhEhwKCXNpZ25hdHVyZRgHIAEoDFIJc2lnbmF0dXJlImEK'
     'BFR5cGUSBwoDU09TEAASDQoJVEVMRU1FVFJZEAESCAoEVEVYVBACEgcKA09HTRADEhAKDFRJTE'
-    'VfUkVRVUVTVBAEEhEKDVRJTEVfUkVTUE9OU0UQBQ==');
+    'VfUkVRVUVTVBAEEhEKDVRJTEVfUkVTUE9OU0UQBRIJCgVWT0lDRRAG');
 
 @$core.Deprecated('Use telemetryDescriptor instead')
 const Telemetry$json = {
