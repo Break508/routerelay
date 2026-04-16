@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:dartz/dartz.dart';
 import 'package:cryptography/cryptography.dart';
 import '../core/failure.dart';
-import '../models/telemetry_state.dart';
 import '../services/mesh_service.dart';
 import '../services/crypto_service.dart';
 import '../services/ble_service.dart';

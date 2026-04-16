@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'dart:math' as math;
-import 'package:typed_data/typed_data.dart';
 import 'package:opus_dart/opus_dart.dart';
 import 'package:record/record.dart';
 import 'package:audioplayers/audioplayers.dart';

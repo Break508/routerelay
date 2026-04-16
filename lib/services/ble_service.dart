@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_ble_peripheral/flutter_ble_peripheral.dart';
@@ -16,8 +15,6 @@ class BleService {
 
   final StreamController<Map<String, dynamic>> _incomingDataController = StreamController.broadcast();
   Stream<Map<String, dynamic>> get incomingData => _incomingDataController.stream;
-
-  String? _targetConvoyId;
 
   BleService() {
     _l2capSubscription = _l2capStream.receiveBroadcastStream().listen((data) {
@@ -50,8 +47,6 @@ class BleService {
   }
 
   Future<void> startScanning(String targetConvoyId) async {
-    _targetConvoyId = targetConvoyId;
-
     await _scanSubscription?.cancel();
     _scanSubscription = FlutterBluePlus.onScanResults.listen((results) {
       for (final r in results) {
@@ -68,11 +63,16 @@ class BleService {
   }
 
   /// Check if manufacturer data matches the target convoy ID
-  bool _matchesConvoyId(Uint8List? data, String targetConvoyId) {
-    if (data == null) return false;
+  bool _matchesConvoyId(Map<int, List<int>> data, String targetConvoyId) {
+    if (data.isEmpty) return false;
     try {
-      final advertisedId = String.fromCharCodes(data);
-      return advertisedId == targetConvoyId;
+      for (final bytes in data.values) {
+        final advertisedId = String.fromCharCodes(bytes);
+        if (advertisedId == targetConvoyId) {
+          return true;
+        }
+      }
+      return false;
     } catch (e) {
       return false;
     }
@@ -82,7 +82,6 @@ class BleService {
     await FlutterBluePlus.stopScan();
     await _scanSubscription?.cancel();
     _scanSubscription = null;
-    _targetConvoyId = null;
   }
   
   /// Dispose resources
