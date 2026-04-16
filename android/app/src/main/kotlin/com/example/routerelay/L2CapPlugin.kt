@@ -56,6 +56,10 @@ class L2CapPlugin: FlutterPlugin, MethodCallHandler {
 
     private fun openChannel(deviceId: String, psm: Int, result: Result) {
         val adapter = BluetoothAdapter.getDefaultAdapter()
+        if (adapter == null) {
+            result.error("BLUETOOTH_UNAVAILABLE", "Bluetooth is not available on this device", null)
+            return
+        }
         val device: BluetoothDevice = adapter.getRemoteDevice(deviceId)
         
         Thread {

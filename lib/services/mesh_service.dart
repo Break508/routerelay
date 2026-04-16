@@ -2,14 +2,11 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:fixnum/fixnum.dart';
 import '../generated/protos/mesh.pb.dart';
-import 'ble_service.dart';
 
 class MeshService {
   static final MeshService _instance = MeshService._internal();
   factory MeshService() => _instance;
   MeshService._internal();
-
-  final BleService _bleService = BleService();
   String? _currentConvoyId;
   String? _myId;
   Timer? _telemetryTimer;
@@ -147,19 +144,17 @@ class MeshService {
       }
     }
   void _relayMessage(MeshPayload payload) {
-    // Increment hop count for the relay
-    final relayPayload = payload.deepCopy()..hopCount = payload.hopCount + 1;
-    // final buffer = relayPayload.writeToBuffer();
-
-    // In actual implementation, we'd send this over BLE
-    // _bleService.send(buffer);
+    // Increment hop count for the relay and relay the message
+    // In actual implementation, we'd do:
+    // final updated = payload.deepCopy()..hopCount = payload.hopCount + 1;
+    // final buffer = updated.writeToBuffer();
+    // BleService().send(buffer);
   }
 
 
   void _updateRoutingTable(MeshPayload ogm) {
     if (ogm.senderId == "lead" && ogm.hopCount < localHopCountToLead) {
       localHopCountToLead = ogm.hopCount + 1;
-      print("New distance to Lead: $localHopCountToLead");
     }
   }
 }

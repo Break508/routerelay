@@ -10,9 +10,8 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        flutterEngine.plugins.add(L2CapPlugin())
         
-        channel = MethodChannel(flutterEngine.binaryMessenger, "io.routerelay/hardware_keys")
+        channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "io.routerelay/hardware_keys")
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

@@ -9,7 +9,7 @@ class JoinTripScreen extends StatefulWidget {
   const JoinTripScreen({super.key, this.convoyId, this.base64TripKey});
 
   @override
-  _JoinTripScreenState createState() => _JoinTripScreenState();
+  State<JoinTripScreen> createState() => _JoinTripScreenState();
 }
 
 class _JoinTripScreenState extends State<JoinTripScreen> {
@@ -51,7 +51,6 @@ class _JoinTripScreenState extends State<JoinTripScreen> {
                         final parts = code.split('|');
                         final convoyId = parts[0];
                         final key = parts[1];
-                        print("Joined Convoy: $convoyId with key: $key");
                         setState(() => _isScanning = false);
                         Navigator.pop(context, {'id': convoyId, 'key': key});
                       }

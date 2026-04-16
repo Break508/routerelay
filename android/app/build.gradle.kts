@@ -37,6 +37,17 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    // Workaround for isar_flutter_libs manifest issue with new AGP
+    packagingOptions {
+        resources {
+            excludes += "**/libgcc_s.so"
+        }
+    }
+}
+
+flutter {
+    source = "../.."
 }
 
 flutter {
