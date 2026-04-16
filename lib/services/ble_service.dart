@@ -8,6 +8,8 @@ class BleService {
   final FlutterBlePeripheral _peripheral = FlutterBlePeripheral();
   final StreamController<ScanResult> _scanResultController = StreamController<ScanResult>.broadcast();
   Stream<ScanResult> get scanResults => _scanResultController.stream;
+  StreamSubscription<List<ScanResult>>? _scanSubscription;
+  StreamSubscription<dynamic>? _l2capSubscription;
 
   static const MethodChannel _l2capChannel = MethodChannel('io.routerelay/l2cap');
   static const EventChannel _l2capStream = EventChannel('io.routerelay/l2cap_stream');
@@ -18,7 +20,7 @@ class BleService {
   String? _targetConvoyId;
 
   BleService() {
-    _l2capStream.receiveBroadcastStream().listen((data) {
+    _l2capSubscription = _l2capStream.receiveBroadcastStream().listen((data) {
       _incomingDataController.add(Map<String, dynamic>.from(data));
     });
   }
@@ -49,8 +51,9 @@ class BleService {
 
   Future<void> startScanning(String targetConvoyId) async {
     _targetConvoyId = targetConvoyId;
-    
-    FlutterBluePlus.onScanResults.listen((results) {
+
+    await _scanSubscription?.cancel();
+    _scanSubscription = FlutterBluePlus.onScanResults.listen((results) {
       for (final r in results) {
         // Filter for targetConvoyId in manufacturerSpecificData
         if (_matchesConvoyId(r.advertisementData.manufacturerData, targetConvoyId)) {
@@ -77,11 +80,17 @@ class BleService {
 
   Future<void> stopScanning() async {
     await FlutterBluePlus.stopScan();
+    await _scanSubscription?.cancel();
+    _scanSubscription = null;
     _targetConvoyId = null;
   }
   
   /// Dispose resources
   void dispose() {
+    _scanSubscription?.cancel();
+    _scanSubscription = null;
+    _l2capSubscription?.cancel();
+    _l2capSubscription = null;
     _scanResultController.close();
     _incomingDataController.close();
     _peripheral.stop();

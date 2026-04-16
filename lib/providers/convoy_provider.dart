@@ -1,12 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/convoy_repository.dart';
 import '../models/telemetry_state.dart';
-import 'package:maplibre_gl/maplibre_gl.dart';
-
-/// Provider for the ConvoyRepository
-final convoyRepositoryProvider = Provider<ConvoyRepository>((ref) {
-  throw UnimplementedError('Initialize via service locator');
-});
+import 'service_providers.dart';
 
 /// State class for convoy information
 class ConvoyState {

@@ -25,6 +25,7 @@ class MeshService {
   
   // Current velocity for adaptive telemetry
   double _currentVelocity = 0.0;
+  Duration _currentTelemetryInterval = const Duration(seconds: 30);
 
   MeshService(this._bleService);
 
@@ -38,10 +39,10 @@ class MeshService {
 
   void _startTelemetryTimer() {
     _telemetryTimer?.cancel();
-    _telemetryTimer = Timer.periodic(_getTelemetryInterval(), (timer) {
-      // Reset timer with potentially new interval based on velocity
-      _startTelemetryTimer();
-      broadcastTelemetry(0.0, 0.0, _currentVelocity, 0.0); // Mock coordinates for now
+    _currentTelemetryInterval = _getTelemetryInterval();
+    _telemetryTimer = Timer.periodic(_currentTelemetryInterval, (_) {
+      // Mock coordinates for now until location feed is wired in.
+      unawaited(broadcastTelemetry(0.0, 0.0, _currentVelocity, 0.0));
     });
   }
 
@@ -68,6 +69,10 @@ class MeshService {
   /// Update current velocity for adaptive telemetry
   void updateVelocity(double velocity) {
     _currentVelocity = velocity;
+    final nextInterval = _getTelemetryInterval();
+    if (nextInterval != _currentTelemetryInterval) {
+      _startTelemetryTimer();
+    }
   }
 
   Future<void> broadcastTelemetry(double lat, double lng, double velocity, double heading) async {
@@ -226,5 +231,11 @@ class MeshService {
     if (ogm.senderId == "lead" && ogm.hopCount < localHopCountToLead) {
       localHopCountToLead = ogm.hopCount + 1;
     }
+  }
+
+  void dispose() {
+    _telemetryTimer?.cancel();
+    _cleanupTimer?.cancel();
+    _voiceController.close();
   }
 }
