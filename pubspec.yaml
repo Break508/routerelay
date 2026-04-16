@@ -51,10 +51,33 @@ dependencies:
   audioplayers: ^6.1.0
   opus_dart: ^3.0.1
   opus_flutter: ^3.0.1
+  
+  # State management
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+  
+  # Dependency injection
+  get_it: ^7.6.4
+  
+  # Error handling
+  dartz: ^0.10.1
+  
+  # Location services
+  location: ^5.0.3
+  
+  # Background service
+  flutter_background_service: ^5.0.5
+  
+  # Typed data utilities
+  typed_data: ^1.3.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  riverpod_generator: ^2.3.9
+  build_runner: ^2.4.8
+  custom_lint: ^0.6.4
+  riverpod_lint: ^2.3.7
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

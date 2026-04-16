@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'di/service_locator.dart';
 import 'ui/map_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const RouteRelayApp());
+  
+  // Initialize dependency injection
+  setupDependencies();
+  
+  runApp(
+    const ProviderScope(
+      child: RouteRelayApp(),
+    ),
+  );
 }
 
 class RouteRelayApp extends StatelessWidget {

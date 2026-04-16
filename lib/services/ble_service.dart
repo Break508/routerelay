@@ -1,18 +1,17 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_ble_peripheral/flutter_ble_peripheral.dart';
 
 class BleService {
-  static final BleService _instance = BleService._internal();
-  factory BleService() => _instance;
-  BleService._internal();
-
   final FlutterBlePeripheral _peripheral = FlutterBlePeripheral();
   final StreamController<ScanResult> _scanResultController = StreamController<ScanResult>.broadcast();
   Stream<ScanResult> get scanResults => _scanResultController.stream;
 
   static const MethodChannel _l2capChannel = MethodChannel('io.routerelay/l2cap');
+  
+  String? _targetConvoyId;
 
   Future<void> openL2capChannel(String deviceId, int psm) async {
     await _l2capChannel.invokeMethod('open', {
@@ -21,7 +20,7 @@ class BleService {
     });
   }
 
-  Future<void> sendAudioFrame(Uint8List data) async {
+  Future<void> send(Uint8List data) async {
     await _l2capChannel.invokeMethod('send', {'data': data});
   }
 
@@ -39,17 +38,41 @@ class BleService {
   }
 
   Future<void> startScanning(String targetConvoyId) async {
+    _targetConvoyId = targetConvoyId;
+    
     FlutterBluePlus.onScanResults.listen((results) {
-      for (ScanResult r in results) {
-        // Here we'd filter for targetConvoyId in manufacturerSpecificData
-        _scanResultController.add(r);
+      for (final r in results) {
+        // Filter for targetConvoyId in manufacturerSpecificData
+        if (_matchesConvoyId(r.advertisementData.manufacturerData, targetConvoyId)) {
+          _scanResultController.add(r);
+        }
       }
+    }, onError: (error) {
+      _scanResultController.addError(error);
     });
 
     await FlutterBluePlus.startScan(timeout: const Duration(seconds: 10), androidUsesFineLocation: true);
   }
 
+  /// Check if manufacturer data matches the target convoy ID
+  bool _matchesConvoyId(Uint8List? data, String targetConvoyId) {
+    if (data == null) return false;
+    try {
+      final advertisedId = String.fromCharCodes(data);
+      return advertisedId == targetConvoyId;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<void> stopScanning() async {
     await FlutterBluePlus.stopScan();
+    _targetConvoyId = null;
+  }
+  
+  /// Dispose resources
+  void dispose() {
+    _scanResultController.close();
+    _peripheral.stop();
   }
 }
