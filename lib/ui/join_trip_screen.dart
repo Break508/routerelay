@@ -14,6 +14,7 @@ class JoinTripScreen extends StatefulWidget {
 
 class _JoinTripScreenState extends State<JoinTripScreen> {
   bool _isScanning = false;
+  bool _isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -43,17 +44,30 @@ class _JoinTripScreenState extends State<JoinTripScreen> {
                 height: 400,
                 width: 300,
                 child: MobileScanner(
-                  onDetect: (capture) {
-                    final List<Barcode> barcodes = capture.barcodes;
-                    for (final barcode in barcodes) {
-                      final String? code = barcode.rawValue;
-                      if (code != null && code.contains('|')) {
-                        final parts = code.split('|');
-                        final convoyId = parts[0];
-                        final key = parts[1];
-                        setState(() => _isScanning = false);
-                        Navigator.pop(context, {'id': convoyId, 'key': key});
+                  onDetect: (capture) async {
+                    // Prevent multiple detections
+                    if (_isProcessing) return;
+                    _isProcessing = true;
+                    
+                    try {
+                      final List<Barcode> barcodes = capture.barcodes;
+                      for (final barcode in barcodes) {
+                        final String? code = barcode.rawValue;
+                        if (code != null && code.contains('|')) {
+                          final parts = code.split('|');
+                          if (parts.length == 2) {
+                            final convoyId = parts[0];
+                            final key = parts[1];
+                            
+                            if (!mounted) return;
+                            setState(() => _isScanning = false);
+                            Navigator.pop(context, {'id': convoyId, 'key': key});
+                            return;
+                          }
+                        }
                       }
+                    } finally {
+                      _isProcessing = false;
                     }
                   },
                 ),

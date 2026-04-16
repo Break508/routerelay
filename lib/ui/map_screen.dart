@@ -1,41 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import '../models/telemetry_state.dart';
 import '../services/audio_service.dart';
-import '../services/mesh_service.dart';
+import '../providers/service_providers.dart';
+import '../providers/convoy_provider.dart';
 import 'widgets/convoy_sidebar.dart';
 import 'widgets/ptt_button.dart';
 
-class MapScreen extends StatefulWidget {
+class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends ConsumerState<MapScreen> {
   MapLibreMapController? _controller;
   final List<TelemetryState> _members = [];
   final double _leadVelocity = 0.0;
-  final AudioService _audioService = AudioService();
-  final MeshService _meshService = MeshService();
+  late final AudioService _audioService;
   static const _hardwareKeys = MethodChannel('io.routerelay/hardware_keys');
 
   @override
   void initState() {
     super.initState();
+    _audioService = ref.read(bleServiceProvider).hashCode > 0 ? AudioService() : AudioService();
+    
     _hardwareKeys.setMethodCallHandler((call) async {
       if (call.method == 'volumeUpPressed') {
         _audioService.startRecording((data) {
-          _meshService.broadcastVoice(data);
+          final meshService = ref.read(meshServiceProvider);
+          meshService.broadcastVoice(data);
         });
       } else if (call.method == 'volumeUpReleased') {
         _audioService.stopRecording();
       }
     });
 
-    _meshService.voiceStream.listen((data) {
+    final meshService = ref.read(meshServiceProvider);
+    meshService.voiceStream.listen((data) {
       _audioService.play(data);
     });
   }
@@ -53,13 +58,22 @@ class _MapScreenState extends State<MapScreen> {
 
   void _updateMarkers() {
     if (_controller == null) return;
-    // In a real app, this would use _controller!.addSymbol
-    // to place avatars and ghosts on the map.
-    for (var member in _members) {
-      // ignore: unused_local_variable
-      final pos = member.getProjectedPosition();
-      // Add symbol to map at pos
-    }
+    
+    // Efficiently update markers using batch operations
+    _controller!.clearSymbols().then((_) {
+      final symbols = _members.map((member) {
+        final pos = member.getProjectedPosition();
+        return SymbolOptions(
+          geometry: pos,
+          iconSize: 1.0,
+          iconImage: 'marker_icon', // You'll need to add this asset
+        );
+      }).toList();
+      
+      if (symbols.isNotEmpty) {
+        _controller!.addSymbols(symbols);
+      }
+    });
   }
 
   @override
@@ -67,6 +81,26 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('RouteRelay Map'),
+        actions: [
+          // Show convoy status
+          Consumer(builder: (context, ref, _) {
+            final convoyState = ref.watch(convoyStateProvider);
+            return Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Center(
+                child: Text(
+                  convoyState.isConnected 
+                    ? 'Connected: ${convoyState.convoyId ?? "N/A"}'
+                    : 'Not Connected',
+                  style: TextStyle(
+                    color: convoyState.isConnected ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
       ),
       body: Stack(
         children: [
@@ -95,7 +129,8 @@ class _MapScreenState extends State<MapScreen> {
               child: PTTButton(
                 audioService: _audioService,
                 onAudioData: (data) {
-                  _meshService.broadcastVoice(data);
+                  final meshService = ref.read(meshServiceProvider);
+                  meshService.broadcastVoice(data);
                 },
               ),
             ),
