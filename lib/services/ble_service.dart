@@ -10,8 +10,18 @@ class BleService {
   Stream<ScanResult> get scanResults => _scanResultController.stream;
 
   static const MethodChannel _l2capChannel = MethodChannel('io.routerelay/l2cap');
-  
+  static const EventChannel _l2capStream = EventChannel('io.routerelay/l2cap_stream');
+
+  final StreamController<Map<String, dynamic>> _incomingDataController = StreamController.broadcast();
+  Stream<Map<String, dynamic>> get incomingData => _incomingDataController.stream;
+
   String? _targetConvoyId;
+
+  BleService() {
+    _l2capStream.receiveBroadcastStream().listen((data) {
+      _incomingDataController.add(Map<String, dynamic>.from(data));
+    });
+  }
 
   Future<void> openL2capChannel(String deviceId, int psm) async {
     await _l2capChannel.invokeMethod('open', {
@@ -20,8 +30,8 @@ class BleService {
     });
   }
 
-  Future<void> send(Uint8List data) async {
-    await _l2capChannel.invokeMethod('send', {'data': data});
+  Future<void> send(Uint8List data, {String? deviceId}) async {
+    await _l2capChannel.invokeMethod('send', {'data': data, 'deviceId': deviceId});
   }
 
   Future<void> startAdvertising(String convoyId) async {
@@ -73,6 +83,7 @@ class BleService {
   /// Dispose resources
   void dispose() {
     _scanResultController.close();
+    _incomingDataController.close();
     _peripheral.stop();
   }
 }
